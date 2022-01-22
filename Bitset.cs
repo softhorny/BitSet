@@ -1,6 +1,6 @@
-public class Bitmask
+public class Bitset
 {
-    public Bitmask(int length)
+    public Bitset(int length)
     {
         if (length < 0)
             throw new ArgumentOutOfRangeException();
