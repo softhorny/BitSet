@@ -18,7 +18,8 @@ public class Bitset
     
     public void Clear()
     {
-        for(int i = 0; i < _bits.Length; i++)
+        int length = _bits.Length;
+        for(int i = 0; i < length; i++)
             _bits[i] = 0;
     }
 
