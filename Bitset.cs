@@ -27,7 +27,7 @@ public class Bitset
     public void Set(int key, bool value)
     {
         if(value)
-            SetTrue(key)
+            SetTrue(key);
         else
             SetFalse(key);
     }
