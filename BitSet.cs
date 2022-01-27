@@ -1,8 +1,8 @@
-public class Bitset
+public class BitSet
 {
     private const int LOG2_BYTE_SIZE = 3;
     
-    public Bitset(int length)
+    public BitSet(int length)
     {
         if (length < 0)
             throw new ArgumentOutOfRangeException();
