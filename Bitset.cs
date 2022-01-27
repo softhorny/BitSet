@@ -37,7 +37,9 @@ public class Bitset
     public void SetAll(bool value)
     {
         int length = _bits.Length;
+        
         byte byteValue = value ? byte.MaxValue : byte.MinValue;
+        
         for(int i = 0; i < length; i++)
             _bits[i] = byteValue;
     }
