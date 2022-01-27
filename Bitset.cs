@@ -16,7 +16,7 @@ public class Bitset
 
     public int Length => _length;
     
-    public bool this[int key] { get => Get(key); set => Set(key, value);
+    public bool this[int key] { get => Get(key); set => Set(key, value); }
     
     public bool Get(int key) => (_bits[key >> 3] & (1 << key)) != 0;
     
