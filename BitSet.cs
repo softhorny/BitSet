@@ -7,16 +7,14 @@ public class BitSet
         if (length < 0)
             throw new ArgumentOutOfRangeException();
 
-        _length = length;
-
         _bits = new uint[((length - 1) >> LOG2_UINT32_SIZE) + 1];
+        
+        Length = length;
     }
 
     public uint[] _bits;
 
-    private int _length;
-
-    public int Length => _length;
+    public int Length { get; private set; }
 
     public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1 << key)) != 0;
 
