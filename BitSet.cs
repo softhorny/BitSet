@@ -1,5 +1,7 @@
 public class BitSet
 {
+    private const int UINT32_SIZE = 32;
+    
     private const int LOG2_UINT32_SIZE = 5;
 
     public BitSet(int length)
@@ -31,6 +33,31 @@ public class BitSet
     }
 
     public bool this[int key] { get => Get(key); set => Set(key, value); }
+    
+    public void SetTrue(int from, int to)
+    {
+        if(from == to)
+        {
+            SetTrue(from);
+
+            return;
+        }
+
+        int i = from >> LOG2_UINT32_SIZE;
+
+        int left = from;
+
+        from = UINT32_SIZE * (i + 1);
+
+        bool b = to < from;
+
+        int right = b ? UINT32_SIZE - to - 1 : 0;
+
+        _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
+
+        if(!b)
+            SetTrue(from, to);
+    }
 
     public void SetAll(bool value)
     {
