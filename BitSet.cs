@@ -45,18 +45,16 @@ public class BitSet
 
         int i = from >> LOG2_UINT32_SIZE;
 
-        int left = from;
+        int right = 0, left = from;
 
         from = UINT32_SIZE * (i + 1);
 
-        bool b = to < from;
-
-        int right = b ? UINT32_SIZE - to - 1 : 0;
+        if(to < from)
+            right = UINT32_SIZE - to - 1;
+        else 
+            SetTrue(from, to);
 
         _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
-
-        if(!b)
-            SetTrue(from, to);
     }
 
     public void SetAll(bool value)
