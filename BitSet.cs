@@ -34,14 +34,13 @@ public class BitSet
 
     public bool this[int key] { get => Get(key); set => Set(key, value); }
     
+    /// <summary>
+    /// Sets the bits in the given range from (inclusive) and to (exclusive) to true.
+    /// </summary>
     public void SetTrue(int from, int to)
     {
         if(from == to)
-        {
-            SetTrue(from);
-
             return;
-        }
 
         int i = from >> LOG2_UINT32_SIZE;
 
@@ -50,21 +49,20 @@ public class BitSet
         from = UINT32_SIZE * (i + 1);
 
         if(to < from)
-            right = UINT32_SIZE - to - 1;
+            right = UINT32_SIZE - to;
         else 
             SetTrue(from, to);
 
         _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
     }
     
+    /// <summary>
+    /// Sets the bits in the given range from (inclusive) and to (exclusive) to false.
+    /// </summary>
     public void SetFalse(int from, int to)
     {
         if(from == to)
-        {
-            SetFalse(from);
-
             return;
-        }
 
         int i = from >> LOG2_UINT32_SIZE;
 
@@ -73,13 +71,16 @@ public class BitSet
         from = UINT32_SIZE * (i + 1);
 
         if(to < from)
-            right = UINT32_SIZE - to - 1;
+            right = UINT32_SIZE - to;
         else 
             SetFalse(from, to);
 
         _bits[i] &= ~(uint.MaxValue >> right & uint.MaxValue << left);
     }
-
+    
+    /// <summary>
+    /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value.
+    /// </summary>
     public void Set(int from, int to, bool value)
     {
         if(value)
