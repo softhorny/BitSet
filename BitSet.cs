@@ -56,7 +56,38 @@ public class BitSet
 
         _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
     }
+    
+    public void SetFalse(int from, int to)
+    {
+        if(from == to)
+        {
+            SetFalse(from);
 
+            return;
+        }
+
+        int i = from >> LOG2_UINT32_SIZE;
+
+        int right = 0, left = from;
+
+        from = UINT32_SIZE * (i + 1);
+
+        if(to < from)
+            right = UINT32_SIZE - to - 1;
+        else 
+            SetFalse(from, to);
+
+        _bits[i] &= ~(uint.MaxValue >> right & uint.MaxValue << left);
+    }
+
+    public void Set(int from, int to, bool value)
+    {
+        if(value)
+            SetTrue(from, to);
+        else
+            SetFalse(from, to);
+    }
+    
     public void SetAll(bool value)
     {
         int length = _bits.Length;
