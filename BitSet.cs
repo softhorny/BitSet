@@ -39,43 +39,43 @@ public class BitSet
     /// </summary>
     public void SetTrue(int from, int to)
     {
-        if(from == to)
-            return;
-
         int i = from >> LOG2_UINT32_SIZE;
 
-        int right = 0, left = from;
+        while(from < to)
+        {
+            int right = 0, left = from;
 
-        from = UINT32_SIZE * (i + 1);
+            from = UINT32_SIZE * (i + 1);
 
-        if(to < from)
-            right = UINT32_SIZE - to;
-        else 
-            SetTrue(from, to);
+            if(to < from)
+                right = UINT32_SIZE - to;
 
-        _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
+             _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
+
+            i++;
+        }
     }
-    
+
     /// <summary>
     /// Sets the bits in the given range from (inclusive) and to (exclusive) to false.
     /// </summary>
     public void SetFalse(int from, int to)
     {
-        if(from == to)
-            return;
-
         int i = from >> LOG2_UINT32_SIZE;
 
-        int right = 0, left = from;
+        while(from < to)
+        {
+            int right = 0, left = from;
 
-        from = UINT32_SIZE * (i + 1);
+            from = UINT32_SIZE * (i + 1);
 
-        if(to < from)
-            right = UINT32_SIZE - to;
-        else 
-            SetFalse(from, to);
+            if(to < from)
+                right = UINT32_SIZE - to;
 
-        _bits[i] &= ~(uint.MaxValue >> right & uint.MaxValue << left);
+             _bits[i] &= ~(uint.MaxValue >> right & uint.MaxValue << left);
+
+            i++;
+        }
     }
     
     /// <summary>
