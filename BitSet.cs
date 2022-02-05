@@ -6,7 +6,7 @@ public class BitSet
 
     public BitSet(int length)
     {
-        if (length < 0)
+        if(length < 0)
             throw new ArgumentOutOfRangeException();
 
         _bits = new uint[((length - 1) >> LOG2_UINT32_SIZE) + 1];
