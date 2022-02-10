@@ -1,10 +1,10 @@
-public class BitArray
+public class BitSet
 {
     private const int UINT32_SIZE = 32;
     
     private const int LOG2_UINT32_SIZE = 5;
 
-    public BitArray(int length)
+    public BitSet(int length)
     {
         if(length < 0)
             throw new ArgumentOutOfRangeException();
