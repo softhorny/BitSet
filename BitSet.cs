@@ -18,11 +18,11 @@ public class BitSet
 
     public int Length { get; private set; }
 
-    public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1 << key)) != 0;
+    public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != 0;
 
-    public void SetTrue(int key) => _bits[key >> LOG2_UINT32_SIZE] |= (uint)(1 << key);
+    public void SetTrue(int key) => _bits[key >> LOG2_UINT32_SIZE] |= 1u << key;
 
-    public void SetFalse(int key) => _bits[key >> LOG2_UINT32_SIZE] &= (uint)~(1 << key);
+    public void SetFalse(int key) => _bits[key >> LOG2_UINT32_SIZE] &= ~(1u << key);
 
     public void Set(int key, bool value)
     {
@@ -39,43 +39,53 @@ public class BitSet
     /// </summary>
     public void SetTrue(int from, int to)
     {
+        if(from >= to)
+            return;
+
         int i = from >> LOG2_UINT32_SIZE;
 
-        while(from < to)
+        int length = to - 1 >> LOG2_UINT32_SIZE;
+
+        if(i == length)
         {
-            int right = 0, left = from;
+            _bits[i] |= (1u << to) - 1 & uint.MaxValue << from;
 
-            from = UINT32_SIZE * (i + 1);
-
-            if(to < from)
-                right = UINT32_SIZE - to;
-
-             _bits[i] |= uint.MaxValue >> right & uint.MaxValue << left;
-
-            i++;
+            return;
         }
-    }
 
+        _bits[i] |= uint.MaxValue << from;
+
+        _bits[length] |= (1u << to) - 1;
+
+        for(i++; i < length; i++)
+            _bits[i] = uint.MaxValue;
+    }
+        
     /// <summary>
     /// Sets the bits in the given range from (inclusive) and to (exclusive) to false.
     /// </summary>
     public void SetFalse(int from, int to)
     {
+        if(from >= to)
+            return;
+
         int i = from >> LOG2_UINT32_SIZE;
 
-        while(from < to)
+        int length = to - 1 >> LOG2_UINT32_SIZE;
+
+        if(i == length)
         {
-            int right = 0, left = from;
+            _bits[i] &= ~((1u << to) - 1 & uint.MaxValue << from);
 
-            from = UINT32_SIZE * (i + 1);
-
-            if(to < from)
-                right = UINT32_SIZE - to;
-
-             _bits[i] &= ~(uint.MaxValue >> right & uint.MaxValue << left);
-
-            i++;
+            return;
         }
+
+        _bits[i] &= ~(uint.MaxValue << from);
+
+        _bits[length] &= ~((1u << to) - 1);
+
+        for(i++; i < length; i++)
+            _bits[i] = uint.MinValue;
     }
     
     /// <summary>
