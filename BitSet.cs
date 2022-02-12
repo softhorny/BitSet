@@ -18,7 +18,7 @@ public class BitSet
 
     public int Length { get; private set; }
 
-    public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != 0;
+    public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
 
     public void SetTrue(int key) => _bits[key >> LOG2_UINT32_SIZE] |= 1u << key;
 
