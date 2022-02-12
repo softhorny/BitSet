@@ -17,6 +17,8 @@ public class BitSet
     public uint[] _bits;
 
     public int Length { get; private set; }
+    
+    #region O(1)
 
     public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
 
@@ -33,6 +35,10 @@ public class BitSet
     }
 
     public bool this[int key] { get => Get(key); set => Set(key, value); }
+    
+    #endregion
+    
+    #region O(n)
     
     /// <summary>
     /// Sets the bits in the given range from (inclusive) and to (exclusive) to true.
@@ -108,4 +114,6 @@ public class BitSet
         for(int i = 0; i < length; i++)
             _bits[i] = uintValue;
     }
+    
+    #endregion
 }
