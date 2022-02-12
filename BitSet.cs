@@ -14,7 +14,7 @@ public class BitSet
         Length = length;
     }
 
-    public uint[] _bits;
+    private uint[] _bits;
 
     public int Length { get; private set; }
     
