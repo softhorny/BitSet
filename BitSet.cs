@@ -49,7 +49,6 @@ public class BitSet
             return;
 
         int i = from >> LOG2_UINT32_SIZE;
-
         int length = to - 1 >> LOG2_UINT32_SIZE;
 
         if(i == length)
@@ -60,7 +59,6 @@ public class BitSet
         }
 
         _bits[i] |= uint.MaxValue << from;
-
         _bits[length] |= uint.MaxValue >> UINT32_SIZE - to;
 
         for(i++; i < length; i++)
@@ -76,7 +74,6 @@ public class BitSet
             return;
 
         int i = from >> LOG2_UINT32_SIZE;
-
         int length = to - 1 >> LOG2_UINT32_SIZE;
 
         if(i == length)
@@ -87,7 +84,6 @@ public class BitSet
         }
 
         _bits[i] &= ~(uint.MaxValue << from);
-
         _bits[length] &= ~(uint.MaxValue >> UINT32_SIZE - to);
 
         for(i++; i < length; i++)
