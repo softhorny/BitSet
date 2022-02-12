@@ -48,8 +48,8 @@ public class BitSet
         if(from >= to)
             return;
 
-        int i = from >> LOG2_UINT32_SIZE;
-        int length = to - 1 >> LOG2_UINT32_SIZE;
+        int i = from >> LOG2_UINT32_SIZE,
+        length = to - 1 >> LOG2_UINT32_SIZE;
 
         if(i == length)
         {
@@ -73,8 +73,8 @@ public class BitSet
         if(from >= to)
             return;
 
-        int i = from >> LOG2_UINT32_SIZE;
-        int length = to - 1 >> LOG2_UINT32_SIZE;
+        int i = from >> LOG2_UINT32_SIZE,
+        length = to - 1 >> LOG2_UINT32_SIZE;
 
         if(i == length)
         {
