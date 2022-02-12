@@ -1,5 +1,7 @@
 public class BitSet
 {
+    private const int UINT32_SIZE = 32;
+    
     private const int LOG2_UINT32_SIZE = 5;
 
     public BitSet(int length)
@@ -46,14 +48,14 @@ public class BitSet
 
         if(i == length)
         {
-            _bits[i] |= (1u << to) - 1 & uint.MaxValue << from;
+            _bits[i] |= uint.MaxValue >> UINT32_SIZE - to & uint.MaxValue << from;
 
             return;
         }
 
         _bits[i] |= uint.MaxValue << from;
 
-        _bits[length] |= (1u << to) - 1;
+        _bits[length] |= uint.MaxValue >> UINT32_SIZE - to;
 
         for(i++; i < length; i++)
             _bits[i] = uint.MaxValue;
@@ -73,14 +75,14 @@ public class BitSet
 
         if(i == length)
         {
-            _bits[i] &= ~((1u << to) - 1 & uint.MaxValue << from);
+            _bits[i] &= ~(uint.MaxValue >> UINT32_SIZE - to & uint.MaxValue << from);
 
             return;
         }
 
         _bits[i] &= ~(uint.MaxValue << from);
 
-        _bits[length] &= ~((1u << to) - 1);
+        _bits[length] &= ~(uint.MaxValue >> UINT32_SIZE - to);
 
         for(i++; i < length; i++)
             _bits[i] = uint.MinValue;
