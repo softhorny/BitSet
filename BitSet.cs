@@ -40,9 +40,7 @@ public class BitSet
     
 #region O(n)
     
-    /// <summary>
-    /// Sets the bits in the given range from (inclusive) and to (exclusive) to true.
-    /// </summary>
+    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to true. </summary>
     public void SetTrue(int from, int to)
     {
         int i = from >> LOG2_UINT32_SIZE,
@@ -62,9 +60,7 @@ public class BitSet
             _bits[i] = uint.MaxValue;
     }
         
-    /// <summary>
-    /// Sets the bits in the given range from (inclusive) and to (exclusive) to false.
-    /// </summary>
+    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to false. </summary>
     public void SetFalse(int from, int to)
     {
         int i = from >> LOG2_UINT32_SIZE,
@@ -84,9 +80,7 @@ public class BitSet
             _bits[i] = uint.MinValue;
     }
     
-    /// <summary>
-    /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value.
-    /// </summary>
+    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. </summary>
     public void Set(int from, int to, bool value)
     {
         if(value)
