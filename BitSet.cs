@@ -45,9 +45,6 @@ public class BitSet
     /// </summary>
     public void SetTrue(int from, int to)
     {
-        if(from >= to)
-            return;
-
         int i = from >> LOG2_UINT32_SIZE,
         length = to - 1 >> LOG2_UINT32_SIZE;
 
@@ -70,9 +67,6 @@ public class BitSet
     /// </summary>
     public void SetFalse(int from, int to)
     {
-        if(from >= to)
-            return;
-
         int i = from >> LOG2_UINT32_SIZE,
         length = to - 1 >> LOG2_UINT32_SIZE;
 
