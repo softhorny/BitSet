@@ -100,46 +100,47 @@ public class BitSet
     }
     
     /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
-    public int PopCount 
+    public int PopCount()
     { 
-        get 
-        {
-            int count = 0;
-            
-            foreach(var mask in _bits)
-            {
-                if(mask == uint.MinValue)
-                    continue;
-                
-                if(mask == uint.MaxValue)
-                {
-                    count += UINT32_SIZE;
-                    continue;
-                }
-                
-                count += HammingWeight(mask);
-            }
-            
-            return count;
-        }
+        int count = 0;
+
+        foreach(var mask in _bits)
+            count += HammingWeight(mask);
+
+        return count;
     }
     
-    // TODO public int PopCount(int from, int to)
-    
-    private static int HammingWeight(uint mask)
+    /// <summary> Returns the population count (number of bits set) of this bitset in the given range from (inclusive) and to (exclusive). </summary>
+    public int PopCount(int from, int to)
     {
-        const uint c1 = 0x_55555555u;
-        const uint c2 = 0x_33333333u;
-        const uint c3 = 0x_0F0F0F0Fu;
-        const uint c4 = 0x_01010101u;
+        int i = from >> LOG2_UINT32_SIZE,
+        length = to - 1 >> LOG2_UINT32_SIZE;
 
-        mask -= (mask >> 1) & c1;
-        mask = (mask & c2) + ((mask >> 2) & c2);
-        mask = (((mask + (mask >> 4)) & c3) * c4) >> 24;
-
-        return (int)mask;
+        if(i == length)
+            return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> UINT32_SIZE - to));
+        
+        int count = HammingWeight(_bits[i] & (uint.MaxValue << from)) + HammingWeight(_bits[length] & (uint.MaxValue >> UINT32_SIZE - to));
+        
+        for(i++; i < length; i++)
+            count += HammingWeight(_bits[i]);
+        
+        return count;
     }
     
 #endregion
     
+    private static int HammingWeight(uint mask)
+    {
+        if(mask == uint.MinValue)
+            return 0;
+                
+        if(mask == uint.MaxValue)
+            return UINT32_SIZE;
+    
+        mask -= (mask >> 1) & 0x_55555555u;
+        mask = (mask & 0x_33333333u) + ((mask >> 2) & 0x_33333333u);
+        mask = (((mask + (mask >> 4)) & 0x_0F0F0F0Fu) * 0x_01010101u) >> 24;
+
+        return (int)mask;
+    }
 }
