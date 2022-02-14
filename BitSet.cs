@@ -154,9 +154,8 @@ public class BitSet
 
         if(i == length)
             return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> to));
-
-        int count = HammingWeight(_bits[i] & (uint.MaxValue << from)) 
-        count += HammingWeight(_bits[length] & (uint.MaxValue >> to));
+        
+        int count = HammingWeight((_bits[i] & (uint.MaxValue << from)) | ((ulong)_bits[length] & (uint.MaxValue >> to)) << UINT32_SIZE);
 
         for(i++; i < length; i++)
             count += HammingWeight(_bits[i]);
@@ -175,6 +174,23 @@ public class BitSet
         mask -= (mask >> 1) & 0x_55555555u;
         mask = (mask & 0x_33333333u) + ((mask >> 2) & 0x_33333333u);
         mask = (((mask + (mask >> 4)) & 0x_0F0F0F0Fu) * 0x_01010101u) >> 24;
+
+        return (int)mask;
+    }
+    
+    private static int HammingWeight(ulong mask)
+    {
+        const int UINT64_SIZE = 64;
+            
+        if(mask == ulong.MinValue)
+            return 0;
+
+        if(mask == ulong.MaxValue)
+            return UINT64_SIZE;
+
+        mask -= (mask >> 1) & 0x_55555555_55555555ul;
+        mask = (mask & 0x_33333333_33333333ul) + ((mask >> 2) & 0x_33333333_33333333ul);
+        mask = (((mask + (mask >> 4)) & 0x_0F0F0F0F_0F0F0F0Ful) * 0x_01010101_01010101ul) >> 56;
 
         return (int)mask;
     }
