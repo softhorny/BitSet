@@ -113,7 +113,7 @@ public class BitSet
                 
                 if(mask == uint.MaxValue)
                 {
-                    count += UINT_SIZE;
+                    count += UINT32_SIZE;
                     continue;
                 }
                 
