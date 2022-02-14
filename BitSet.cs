@@ -133,9 +133,9 @@ public class BitSet
         const uint c3 = 0x_0F0F0F0Fu;
         const uint c4 = 0x_01010101u;
 
-        value -= (mask >> 1) & c1;
-        value = (mask & c2) + ((mask >> 2) & c2);
-        value = (((mask + (mask >> 4)) & c3) * c4) >> 24;
+        mask -= (mask >> 1) & c1;
+        mask = (mask & c2) + ((mask >> 2) & c2);
+        mask = (((mask + (mask >> 4)) & c3) * c4) >> 24;
 
         return (int)mask;
     }
