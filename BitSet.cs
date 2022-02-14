@@ -100,18 +100,21 @@ public class BitSet
     }
     
     /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
-    public int PopCount()
+    public int PopCount
     { 
-        int count = 0;
+        get
+        {
+            int count = 0;
 
-        foreach(var mask in _bits)
-            count += HammingWeight(mask);
+            foreach(var mask in _bits)
+                count += HammingWeight(mask);
 
-        return count;
+            return count;
+        }
     }
     
     /// <summary> Returns the population count (number of bits set) of this bitset in the given range from (inclusive) and to (exclusive). </summary>
-    public int PopCount(int from, int to)
+    public int GetPopCount(int from, int to)
     {
         int i = from >> LOG2_UINT32_SIZE,
         length = to - 1 >> LOG2_UINT32_SIZE;
