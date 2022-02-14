@@ -145,7 +145,8 @@ public class BitSet
         if(i == length)
             return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> UINT32_SIZE - to));
 
-        int count = HammingWeight(_bits[i] & (uint.MaxValue << from)) + HammingWeight(_bits[length] & (uint.MaxValue >> UINT32_SIZE - to));
+        int count = HammingWeight(_bits[i] & (uint.MaxValue << from)) 
+        count += HammingWeight(_bits[length] & (uint.MaxValue >> UINT32_SIZE - to));
 
         for(i++; i < length; i++)
             count += HammingWeight(_bits[i]);
