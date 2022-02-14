@@ -104,14 +104,10 @@ public class BitSet
     { 
         get 
         {
-            int length = _bits.Length;
-            
             int count = 0;
             
-            for(int i = 0; i < length; i++)
+            foreach(var mask in _bits)
             {
-                var mask = _bits[i];
-                
                 if(mask == uint.MinValue)
                     continue;
                 
