@@ -48,16 +48,17 @@ public class BitSet
 
         int i = from >> LOG2_UINT32_SIZE,
         length = to - 1 >> LOG2_UINT32_SIZE;
+        to = UINT32_SIZE - to;
 
         if(i == length)
         {
-            _bits[i] |= uint.MaxValue >> UINT32_SIZE - to & uint.MaxValue << from;
-
+            _bits[i] |= uint.MaxValue >> to & uint.MaxValue << from;
+            
             return;
         }
 
         _bits[i] |= uint.MaxValue << from;
-        _bits[length] |= uint.MaxValue >> UINT32_SIZE - to;
+        _bits[length] |= uint.MaxValue >> to;
 
         for(i++; i < length; i++)
             _bits[i] = uint.MaxValue;
@@ -73,16 +74,17 @@ public class BitSet
 
         int i = from >> LOG2_UINT32_SIZE,
         length = to - 1 >> LOG2_UINT32_SIZE;
+        to = UINT32_SIZE - to;
 
         if(i == length)
         {
-            _bits[i] &= ~(uint.MaxValue >> UINT32_SIZE - to & uint.MaxValue << from);
+            _bits[i] &= ~(uint.MaxValue >> to & uint.MaxValue << from);
 
             return;
         }
 
         _bits[i] &= ~(uint.MaxValue << from);
-        _bits[length] &= ~(uint.MaxValue >> UINT32_SIZE - to);
+        _bits[length] &= ~(uint.MaxValue >> to);
 
         for(i++; i < length; i++)
             _bits[i] = uint.MinValue;
@@ -111,8 +113,13 @@ public class BitSet
 
     public void Resize(int length)
     {
+        if(length < 0)
+            throw new ArgumentOutOfRangeException();
+        
+        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
+        
         if(length > 0)
-            Array.Resize(ref _bits, ((length - 1) >> LOG2_UINT32_SIZE) + 1);
+            Array.Resize(ref _bits, length);
         else
             _bits = Array.Empty<uint>();
     }
@@ -143,12 +150,13 @@ public class BitSet
 
         int i = from >> LOG2_UINT32_SIZE,
         length = to - 1 >> LOG2_UINT32_SIZE;
+        to = UINT32_SIZE - to;
 
         if(i == length)
-            return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> UINT32_SIZE - to));
+            return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> to));
 
         int count = HammingWeight(_bits[i] & (uint.MaxValue << from)) 
-        count += HammingWeight(_bits[length] & (uint.MaxValue >> UINT32_SIZE - to));
+        count += HammingWeight(_bits[length] & (uint.MaxValue >> to));
 
         for(i++; i < length; i++)
             count += HammingWeight(_bits[i]);
