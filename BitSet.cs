@@ -10,10 +10,12 @@ public class BitSet
     /// </summary>
     public BitSet(int length)
     {
-        if(length > 0)
-            _bits = new uint[((length - 1) >> LOG2_UINT32_SIZE) + 1];
-        else
-            _bits = Array.Empty<uint>();
+        if(length < 0)
+            throw new ArgumentOutOfRangeException();
+        
+        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
+        
+        _bits = length > 0 ? new uint[length] : Array.Empty<uint>();
     }
 
     private uint[] _bits;
