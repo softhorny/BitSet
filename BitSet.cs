@@ -93,10 +93,55 @@ public class BitSet
     {
         int length = _bits.Length;
 
-        uint uintValue = value ? uint.MaxValue : uint.MinValue;
+        uint mask = value ? uint.MaxValue : uint.MinValue;
 
         for(int i = 0; i < length; i++)
-            _bits[i] = uintValue;
+            _bits[i] = mask;
+    }
+    
+    /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
+    public int PopCount 
+    { 
+        get 
+        {
+            int length = _bits.Length,
+            
+            int count = 0;
+            
+            for(int i = 0; i < length; i++)
+            {
+                var mask = _bits[i];
+                
+                if(mask == uint.MinValue)
+                    continue;
+                
+                if(mask == uint.MaxValue)
+                {
+                    count += UINT_SIZE;
+                    continue;
+                }
+                
+                count += HammingWeight(mask);
+            }
+            
+            return count;
+        }
+    }
+    
+    // TODO public int PopCount(int from, int to)
+    
+    private static int HammingWeight(uint mask)
+    {
+        const uint c1 = 0x_55555555u;
+        const uint c2 = 0x_33333333u;
+        const uint c3 = 0x_0F0F0F0Fu;
+        const uint c4 = 0x_01010101u;
+
+        value -= (mask >> 1) & c1;
+        value = (mask & c2) + ((mask >> 2) & c2);
+        value = (((mask + (mask >> 4)) & c3) * c4) >> 24;
+
+        return (int)mask;
     }
     
 #endregion
