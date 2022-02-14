@@ -36,7 +36,9 @@ public class BitSet
 
     public bool this[int key] { get => Get(key); set => Set(key, value); }
 
-    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to true. </summary>
+    /// <summary> 
+    /// Sets the bits in the given range from (inclusive) and to (exclusive) to true. 
+    /// </summary>
     public void SetTrue(int from, int to)
     {
         if(from >= to)
@@ -59,7 +61,9 @@ public class BitSet
             _bits[i] = uint.MaxValue;
     }
 
-    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to false. </summary>
+    /// <summary> 
+    /// Sets the bits in the given range from (inclusive) and to (exclusive) to false. 
+    /// </summary>
     public void SetFalse(int from, int to)
     {
         if(from >= to)
@@ -82,7 +86,9 @@ public class BitSet
             _bits[i] = uint.MinValue;
     }
 
-    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. </summary>
+    /// <summary> 
+    /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. 
+    /// </summary>
     public void Set(int from, int to, bool value)
     {
         if(value)
@@ -109,7 +115,9 @@ public class BitSet
             _bits = Array.Empty<uint>();
     }
 
-    /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
+    /// <summary> 
+    /// Returns the population count (number of bits set) of this bitset. 
+    /// </summary>
     public int PopCount
     { 
         get
@@ -123,7 +131,9 @@ public class BitSet
         }
     }
 
-    /// <summary> Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). </summary>
+    /// <summary> 
+    /// Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). 
+    /// </summary>
     public int GetPopCount(int from, int to)
     {
         if(from >= to)
