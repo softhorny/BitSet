@@ -113,7 +113,7 @@ public class BitSet
         }
     }
     
-    /// <summary> Returns the population count (number of bits set) of this bitset in the given range from (inclusive) and to (exclusive). </summary>
+    /// <summary> Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). </summary>
     public int GetPopCount(int from, int to)
     {
         int i = from >> LOG2_UINT32_SIZE,
