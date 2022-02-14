@@ -104,7 +104,7 @@ public class BitSet
     { 
         get 
         {
-            int length = _bits.Length,
+            int length = _bits.Length;
             
             int count = 0;
             
