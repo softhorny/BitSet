@@ -1,7 +1,7 @@
 public class BitSet
 {
     private const int UINT32_SIZE = 32;
-    
+
     private const int LOG2_UINT32_SIZE = 5;
 
     /// <summary> 
@@ -10,11 +10,8 @@ public class BitSet
     /// </summary>
     public BitSet(int length)
     {
-        if(length < 0)
-            throw new ArgumentOutOfRangeException();
-        
-        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
-        
+        EnsureLength(ref length);
+
         _bits = length > 0 ? new uint[length] : Array.Empty<uint>();
     }
 
@@ -53,7 +50,7 @@ public class BitSet
         if(i == length)
         {
             _bits[i] |= uint.MaxValue >> to & uint.MaxValue << from;
-            
+
             return;
         }
 
@@ -113,14 +110,20 @@ public class BitSet
 
     public void Resize(int length)
     {
-        if(length < 0)
-            throw new ArgumentOutOfRangeException();
-        
-        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
-        
+        EnsureLength(ref length);
+
+        if(length == _bits.Length)
+            return;
+
         if(length > 0)
-            Array.Resize(ref _bits, length);
-        else
+        {
+            var newArray = new uint[length];
+
+            Array.Copy(_bits, 0, newArray, 0,  _bits.Length > length ? length : _bits.Length);
+
+            _bits = newArray;
+        }
+        else 
             _bits = Array.Empty<uint>();
     }
 
@@ -154,7 +157,7 @@ public class BitSet
 
         if(i == length)
             return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> to));
-        
+
         int count = HammingWeight((_bits[i] & (uint.MaxValue << from)) | (ulong)(_bits[length] & (uint.MaxValue >> to)) << UINT32_SIZE);
 
         for(i++; i < length; i++)
@@ -177,11 +180,11 @@ public class BitSet
 
         return (int)mask;
     }
-    
+
     private static int HammingWeight(ulong mask)
     {
         const int UINT64_SIZE = 64;
-            
+
         if(mask == ulong.MinValue)
             return 0;
 
@@ -193,5 +196,13 @@ public class BitSet
         mask = (((mask + (mask >> 4)) & 0x_0F0F0F0F_0F0F0F0Ful) * 0x_01010101_01010101ul) >> 56;
 
         return (int)mask;
+    }
+
+    private static void EnsureLength(ref int length)
+    {
+        if(length < 0)
+            throw new ArgumentOutOfRangeException();
+
+        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
     }
 }
