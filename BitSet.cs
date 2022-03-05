@@ -44,10 +44,10 @@ public class BitSet
             return;
 
         int i = from >> LOG2_UINT32_SIZE,
-        length = to - 1 >> LOG2_UINT32_SIZE;
+        last = to - 1 >> LOG2_UINT32_SIZE;
         to = UINT32_SIZE - to;
 
-        if(i == length)
+        if(i == last)
         {
             _bits[i] |= uint.MaxValue >> to & uint.MaxValue << from;
 
@@ -55,9 +55,9 @@ public class BitSet
         }
 
         _bits[i] |= uint.MaxValue << from;
-        _bits[length] |= uint.MaxValue >> to;
+        _bits[last] |= uint.MaxValue >> to;
 
-        for(i++; i < length; i++)
+        for(i++; i < last; i++)
             _bits[i] = uint.MaxValue;
     }
 
@@ -70,10 +70,10 @@ public class BitSet
             return;
 
         int i = from >> LOG2_UINT32_SIZE,
-        length = to - 1 >> LOG2_UINT32_SIZE;
+        last = to - 1 >> LOG2_UINT32_SIZE;
         to = UINT32_SIZE - to;
 
-        if(i == length)
+        if(i == last)
         {
             _bits[i] &= ~(uint.MaxValue >> to & uint.MaxValue << from);
 
@@ -81,7 +81,7 @@ public class BitSet
         }
 
         _bits[i] &= ~(uint.MaxValue << from);
-        _bits[length] &= ~(uint.MaxValue >> to);
+        _bits[last] &= ~(uint.MaxValue >> to);
 
         for(i++; i < length; i++)
             _bits[i] = uint.MinValue;
@@ -152,15 +152,15 @@ public class BitSet
             return 0;
 
         int i = from >> LOG2_UINT32_SIZE,
-        length = to - 1 >> LOG2_UINT32_SIZE;
+        last = to - 1 >> LOG2_UINT32_SIZE;
         to = UINT32_SIZE - to;
 
-        if(i == length)
+        if(i == last)
             return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> to));
 
-        int count = HammingWeight((_bits[i] & (uint.MaxValue << from)) | (ulong)(_bits[length] & (uint.MaxValue >> to)) << UINT32_SIZE);
+        int count = HammingWeight((_bits[i] & (uint.MaxValue << from)) | (ulong)(_bits[last] & (uint.MaxValue >> to)) << UINT32_SIZE);
 
-        for(i++; i < length; i++)
+        for(i++; i < last; i++)
             count += HammingWeight(_bits[i]);
 
         return count;
