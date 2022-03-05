@@ -50,7 +50,6 @@ public class BitSet
         if(i == last)
         {
             _bits[i] |= uint.MaxValue >> to & uint.MaxValue << from;
-
             return;
         }
 
@@ -76,7 +75,6 @@ public class BitSet
         if(i == last)
         {
             _bits[i] &= ~(uint.MaxValue >> to & uint.MaxValue << from);
-
             return;
         }
 
