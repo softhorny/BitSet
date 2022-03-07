@@ -1,7 +1,6 @@
 public class BitSet
 {
     private const int UINT32_SIZE = 32;
-
     private const int LOG2_UINT32_SIZE = 5;
 
     /// <summary> 
