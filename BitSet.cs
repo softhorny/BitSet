@@ -113,38 +113,44 @@ public class BitSet
         if(length == _bits.Length)
             return;
 
-        if(length > 0)
+        if(length == 0)
         {
-            var newArray = new uint[length];
-
-            Array.Copy(_bits, 0, newArray, 0,  _bits.Length > length ? length : _bits.Length);
-
-            _bits = newArray;
-        }
-        else 
             _bits = Array.Empty<uint>();
+            return;
+        }
+        
+        var newArray = new uint[length];
+        
+        Array.Copy(_bits, 0, newArray, 0,  _bits.Length > length ? length : _bits.Length);
+        
+        _bits = newArray;
+    }
+    
+    private static void EnsureLength(ref int length)
+    {
+        if(length < 0)
+            throw new ArgumentOutOfRangeException();
+
+        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
     }
 
     /// <summary> 
     /// Returns the population count (number of bits set) of this bitset. 
     /// </summary>
-    public int PopCount
+    public int PopCount()
     { 
-        get
-        {
-            int count = 0;
+        int count = 0;
 
-            foreach(var mask in _bits)
-                count += HammingWeight(mask);
+        foreach(var mask in _bits)
+            count += HammingWeight(mask);
 
-            return count;
-        }
+        return count;
     }
 
     /// <summary> 
     /// Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). 
     /// </summary>
-    public int GetPopCount(int from, int to)
+    public int PopCount(int from, int to)
     {
         if(from >= to)
             return 0;
@@ -194,13 +200,5 @@ public class BitSet
         mask = (((mask + (mask >> 4)) & 0x_0F0F0F0F_0F0F0F0Ful) * 0x_01010101_01010101ul) >> 56;
 
         return (int)mask;
-    }
-
-    private static void EnsureLength(ref int length)
-    {
-        if(length < 0)
-            throw new ArgumentOutOfRangeException();
-
-        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
     }
 }
