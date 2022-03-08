@@ -25,6 +25,14 @@ public class BitSet
     /// <summary> Returns the number of bits actually used by this bitset. </summary>
     public int Length { [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE; }
 
+    [MethodImpl(INLINE)] private static void EnsureLength(ref int length)
+    {
+        if(length < 0)
+            throw new ArgumentOutOfRangeException();
+
+        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
+    }
+
 #region Get/Set
 
     [MethodImpl(INLINE)] public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
@@ -128,14 +136,6 @@ public class BitSet
         Array.Copy(_bits, 0, newArray, 0,  _bits.Length > length ? length : _bits.Length);
         
         _bits = newArray;
-    }
-    
-    [MethodImpl(INLINE)] private static void EnsureLength(ref int length)
-    {
-        if(length < 0)
-            throw new ArgumentOutOfRangeException();
-
-        length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
     }
 
 #endregion
