@@ -23,7 +23,10 @@ public class BitSet
     private uint[] _bits;
 
     /// <summary> Returns the number of bits actually used by this bitset. </summary>
-    public int Length { [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE; }
+    public int Length 
+    { 
+        [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE; 
+    }
 
     [MethodImpl(INLINE)] private static void EnsureLength(ref int length)
     {
@@ -49,7 +52,11 @@ public class BitSet
             SetFalse(key);
     }
 
-    public bool this[int key] { [MethodImpl(INLINE)] get => Get(key); [MethodImpl(INLINE)] set => Set(key, value); }
+    public bool this[int key] 
+    { 
+        [MethodImpl(INLINE)] get => Get(key); 
+        [MethodImpl(INLINE)] set => Set(key, value); 
+    }
 
     /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to true. </summary>
     [MethodImpl(INLINE)] public void SetTrue(int from, int to)
