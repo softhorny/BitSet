@@ -1,6 +1,14 @@
+// https://github.com/softhorny/BitSet
+
+using System;
+using System.Runtime.CompilerServices;
+
 public class BitSet
 {
+    private const MethodImplOptions INLINE = MethodImplOptions.AggressiveInlining;
+
     private const int UINT32_SIZE = 32;
+
     private const int LOG2_UINT32_SIZE = 5;
 
     /// <summary> 
@@ -16,15 +24,18 @@ public class BitSet
 
     private uint[] _bits;
 
-    public int Length => _bits.Length * UINT32_SIZE;
+    public int Length
+    {
+        [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE;
+    }
 
-    public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
+    [MethodImpl(INLINE)] public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
 
-    public void SetTrue(int key) => _bits[key >> LOG2_UINT32_SIZE] |= 1u << key;
+    [MethodImpl(INLINE)] public void SetTrue(int key) => _bits[key >> LOG2_UINT32_SIZE] |= 1u << key;
 
-    public void SetFalse(int key) => _bits[key >> LOG2_UINT32_SIZE] &= ~(1u << key);
+    [MethodImpl(INLINE)] public void SetFalse(int key) => _bits[key >> LOG2_UINT32_SIZE] &= ~(1u << key);
 
-    public void Set(int key, bool value)
+    [MethodImpl(INLINE)] public void Set(int key, bool value)
     {
         if(value)
             SetTrue(key);
@@ -32,12 +43,16 @@ public class BitSet
             SetFalse(key);
     }
 
-    public bool this[int key] { get => Get(key); set => Set(key, value); }
+    public bool this[int key] 
+    { 
+        [MethodImpl(INLINE)] get => Get(key); 
+        [MethodImpl(INLINE)] set => Set(key, value); 
+    }
 
     /// <summary> 
     /// Sets the bits in the given range from (inclusive) and to (exclusive) to true. 
     /// </summary>
-    public void SetTrue(int from, int to)
+    [MethodImpl(INLINE)] public void SetTrue(int from, int to)
     {
         if(from >= to)
             return;
@@ -62,7 +77,7 @@ public class BitSet
     /// <summary> 
     /// Sets the bits in the given range from (inclusive) and to (exclusive) to false. 
     /// </summary>
-    public void SetFalse(int from, int to)
+    [MethodImpl(INLINE)] public void SetFalse(int from, int to)
     {
         if(from >= to)
             return;
@@ -80,14 +95,14 @@ public class BitSet
         _bits[i] &= ~(uint.MaxValue << from);
         _bits[last] &= ~(uint.MaxValue >> to);
 
-        for(i++; i < length; i++)
+        for(i++; i < last; i++)
             _bits[i] = uint.MinValue;
     }
 
     /// <summary> 
     /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. 
     /// </summary>
-    public void Set(int from, int to, bool value)
+    [MethodImpl(INLINE)] public void Set(int from, int to, bool value)
     {
         if(value)
             SetTrue(from, to);
@@ -95,17 +110,15 @@ public class BitSet
             SetFalse(from, to);
     }
 
-    public void SetAll(bool value)
+    [MethodImpl(INLINE)] public void SetAll(bool value)
     {
-        int length = _bits.Length;
+        var mask = value ? uint.MaxValue : uint.MinValue;
 
-        uint mask = value ? uint.MaxValue : uint.MinValue;
-
-        for(int i = 0; i < length; i++)
+        for(int i = 0; i < _bits.Length; i++)
             _bits[i] = mask;
     }
 
-    public void Resize(int length)
+    [MethodImpl(INLINE)] public void Resize(int length)
     {
         EnsureLength(ref length);
 
@@ -125,7 +138,7 @@ public class BitSet
         _bits = newArray;
     }
     
-    private static void EnsureLength(ref int length)
+    [MethodImpl(INLINE)] private static void EnsureLength(ref int length)
     {
         if(length < 0)
             throw new ArgumentOutOfRangeException();
@@ -136,7 +149,7 @@ public class BitSet
     /// <summary> 
     /// Returns the population count (number of bits set) of this bitset. 
     /// </summary>
-    public int PopCount()
+    [MethodImpl(INLINE)] public int PopCount()
     { 
         int count = 0;
 
@@ -149,7 +162,7 @@ public class BitSet
     /// <summary> 
     /// Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). 
     /// </summary>
-    public int PopCount(int from, int to)
+    [MethodImpl(INLINE)] public int PopCount(int from, int to)
     {
         if(from >= to)
             return 0;
@@ -169,7 +182,7 @@ public class BitSet
         return count;
     }
 
-    private static int HammingWeight(uint mask)
+    [MethodImpl(INLINE)] private static int HammingWeight(uint mask)
     {
         if(mask == uint.MinValue)
             return 0;
@@ -184,7 +197,7 @@ public class BitSet
         return (int)mask;
     }
 
-    private static int HammingWeight(ulong mask)
+    [MethodImpl(INLINE)] private static int HammingWeight(ulong mask)
     {
         const int UINT64_SIZE = 64;
 
