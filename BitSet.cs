@@ -112,7 +112,8 @@ public class BitSet
         else
             SetFalse(from, to);
     }
-
+    
+    /// <summary> Sets all bits in the bitset to the specified value. </summary>
     [MethodImpl(INLINE)] public void SetAll(bool value)
     {
         var mask = value ? uint.MaxValue : uint.MinValue;
@@ -124,7 +125,8 @@ public class BitSet
 #endregion
 
 #region Resize
-
+    
+    /// <summary> Changes the number of bits of this bitset to the specified new length. </summary>
     [MethodImpl(INLINE)] public void Resize(int length)
     {
         EnsureLength(ref length);
