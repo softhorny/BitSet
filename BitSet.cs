@@ -11,10 +11,8 @@ public class BitSet
 
     private const int LOG2_UINT32_SIZE = 5;
 
-    /// <summary> 
-    /// Create a new bitset of the given length. All bits are initially false.
-    /// Length will be rounded up to a multiple of 32. 
-    /// </summary>
+    /// <summary> Create a new bitset of the given length. All bits are initially false. 
+    /// Length will be rounded up to a multiple of 32. </summary>
     public BitSet(int length)
     {
         EnsureLength(ref length);
@@ -24,10 +22,10 @@ public class BitSet
 
     private uint[] _bits;
 
-    public int Length
-    {
-        [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE;
-    }
+    /// <summary> Returns the number of bits actually used by this bitset. </summary>
+    public int Length { [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE; }
+
+#region Get/Set
 
     [MethodImpl(INLINE)] public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
 
@@ -43,15 +41,9 @@ public class BitSet
             SetFalse(key);
     }
 
-    public bool this[int key] 
-    { 
-        [MethodImpl(INLINE)] get => Get(key); 
-        [MethodImpl(INLINE)] set => Set(key, value); 
-    }
+    public bool this[int key] { [MethodImpl(INLINE)] get => Get(key); [MethodImpl(INLINE)] set => Set(key, value); }
 
-    /// <summary> 
-    /// Sets the bits in the given range from (inclusive) and to (exclusive) to true. 
-    /// </summary>
+    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to true. </summary>
     [MethodImpl(INLINE)] public void SetTrue(int from, int to)
     {
         if(from >= to)
@@ -74,9 +66,7 @@ public class BitSet
             _bits[i] = uint.MaxValue;
     }
 
-    /// <summary> 
-    /// Sets the bits in the given range from (inclusive) and to (exclusive) to false. 
-    /// </summary>
+    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to false. </summary>
     [MethodImpl(INLINE)] public void SetFalse(int from, int to)
     {
         if(from >= to)
@@ -99,9 +89,7 @@ public class BitSet
             _bits[i] = uint.MinValue;
     }
 
-    /// <summary> 
-    /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. 
-    /// </summary>
+    /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. </summary>
     [MethodImpl(INLINE)] public void Set(int from, int to, bool value)
     {
         if(value)
@@ -117,6 +105,10 @@ public class BitSet
         for(int i = 0; i < _bits.Length; i++)
             _bits[i] = mask;
     }
+
+#endregion
+
+#region Resize
 
     [MethodImpl(INLINE)] public void Resize(int length)
     {
@@ -146,9 +138,11 @@ public class BitSet
         length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
     }
 
-    /// <summary> 
-    /// Returns the population count (number of bits set) of this bitset. 
-    /// </summary>
+#endregion
+
+#region PopCount
+
+    /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
     [MethodImpl(INLINE)] public int PopCount()
     { 
         int count = 0;
@@ -159,9 +153,7 @@ public class BitSet
         return count;
     }
 
-    /// <summary> 
-    /// Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). 
-    /// </summary>
+    /// <summary> Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). </summary>
     [MethodImpl(INLINE)] public int PopCount(int from, int to)
     {
         if(from >= to)
@@ -213,4 +205,7 @@ public class BitSet
 
         return (int)mask;
     }
+
+#endregion
+
 }
