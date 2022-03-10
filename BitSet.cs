@@ -112,7 +112,7 @@ public class BitSet
         else
             SetFalse(from, to);
     }
-    
+
     /// <summary> Sets all bits in the bitset to the specified value. </summary>
     [MethodImpl(INLINE)] public void SetAll(bool value)
     {
@@ -125,7 +125,7 @@ public class BitSet
 #endregion
 
 #region Resize
-    
+
     /// <summary> Changes the number of bits of this bitset to the specified new length. </summary>
     [MethodImpl(INLINE)] public void Resize(int length)
     {
@@ -151,16 +151,8 @@ public class BitSet
 
 #region PopCount
 
-    /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
-    [MethodImpl(INLINE)] public int PopCount()
-    { 
-        int count = 0;
-
-        foreach(var mask in _bits)
-            count += HammingWeight(mask);
-
-        return count;
-    }
+    /// <summary> Returns the population count of a particular bit, 0 or 1. </summary>
+    [MethodImpl(INLINE)] public int PopCount(int key) => (int)(_bits[key >> LOG2_UINT32_SIZE] >> key & 1u);
 
     /// <summary> Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). </summary>
     [MethodImpl(INLINE)] public int PopCount(int from, int to)
@@ -179,6 +171,17 @@ public class BitSet
 
         for(i++; i < last; i++)
             count += HammingWeight(_bits[i]);
+
+        return count;
+    }
+
+    /// <summary> Returns the population count (number of bits set) of this bitset. </summary>
+    [MethodImpl(INLINE)] public int PopCount()
+    { 
+        int count = 0;
+
+        foreach(var mask in _bits)
+            count += HammingWeight(mask);
 
         return count;
     }
