@@ -52,6 +52,21 @@ public class BitSet
             SetFalse(key);
     }
 
+    [MethodImpl(INLINE)] public void Set(int key, int value)
+    {
+        switch(value)
+        {
+            case 0: 
+                SetFalse(key); 
+                break;
+            case 1: 
+                SetTrue(key); 
+                break;
+            default: 
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     public bool this[int key] 
     { 
         [MethodImpl(INLINE)] get => Get(key); 
@@ -62,20 +77,7 @@ public class BitSet
     public int this[int key] 
     { 
         [MethodImpl(INLINE)] get => PopCount(key);
-        [MethodImpl(INLINE)] set 
-        {
-            switch(key)
-            {
-                case 0: 
-                    SetFalse(key); 
-                    break;
-                case 1: 
-                    SetTrue(key); 
-                    break;
-                default: 
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+        [MethodImpl(INLINE)] set => Set(key, value);
     }
     */
 
@@ -134,6 +136,22 @@ public class BitSet
             SetFalse(from, to);
     }
 
+    /// <inheritdoc cref = "Set(int, int, bool)"/>
+    [MethodImpl(INLINE)] public void Set(int from, int to, int value)
+    {
+        switch(value)
+        {
+            case 0: 
+                SetFalse(from, to);
+                break;
+            case 1: 
+                SetTrue(from, to);
+                break;
+            default: 
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     /// <summary> Sets all bits in the bitset to the specified value. </summary>
     [MethodImpl(INLINE)] public void SetAll(bool value)
     {
@@ -141,6 +159,24 @@ public class BitSet
 
         for(int i = 0; i < _bits.Length; i++)
             _bits[i] = mask;
+    }
+
+    /// <inheritdoc cref = "SetAll(bool)"/>
+    [MethodImpl(INLINE)] public void SetAll(int value)
+    {
+        switch(value)
+        {
+            case 0: 
+                for(int i = 0; i < _bits.Length; i++)
+                    _bits[i] = uint.MinValue;
+                break;
+            case 1: 
+                for(int i = 0; i < _bits.Length; i++)
+                    _bits[i] = uint.MaxValue;
+                break;
+            default: 
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
 #endregion
