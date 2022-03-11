@@ -63,14 +63,6 @@ namespace Softhorny.BitSet
             [MethodImpl(INLINE)] set => Set(key, value); 
         }
 
-        /*
-        public int this[int key] 
-        { 
-            [MethodImpl(INLINE)] get => PopCount(key);
-            [MethodImpl(INLINE)] set => Set(key, value);
-        }
-        */
-
         /// <summary> Sets the bits in the given range from (inclusive) and to (exclusive) to true. </summary>
         [MethodImpl(INLINE)] public void SetTrue(int from, int to)
         {
