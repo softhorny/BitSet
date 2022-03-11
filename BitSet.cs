@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-public class BitSet
+public partial class BitSet
 {
     private const MethodImplOptions INLINE = MethodImplOptions.AggressiveInlining;
 
@@ -35,9 +35,12 @@ public class BitSet
 
         length = ((length - 1) >> LOG2_UINT32_SIZE) + 1;
     }
+}
 
 #region Get/Set
 
+public partial class BitSet
+{
     [MethodImpl(INLINE)] public bool Get(int key) => (_bits[key >> LOG2_UINT32_SIZE] & (1u << key)) != uint.MinValue;
 
     [MethodImpl(INLINE)] public void SetTrue(int key) => _bits[key >> LOG2_UINT32_SIZE] |= 1u << key;
@@ -178,11 +181,13 @@ public class BitSet
                 throw new ArgumentOutOfRangeException();
         }
     }
-
+}
 #endregion
 
 #region Resize
 
+public partial class BitSet
+{
     /// <summary> Changes the number of bits of this bitset to the specified new length. </summary>
     [MethodImpl(INLINE)] public void Resize(int length)
     {
@@ -203,11 +208,13 @@ public class BitSet
         
         _bits = newArray;
     }
-
+}
 #endregion
 
 #region PopCount
 
+public partial class BitSet
+{
     /// <summary> Returns the population count of a particular bit, 0 or 1. </summary>
     [MethodImpl(INLINE)] public int PopCount(int key) => (int)(_bits[key >> LOG2_UINT32_SIZE] >> key & 1u);
 
@@ -274,6 +281,5 @@ public class BitSet
 
         return (int)mask;
     }
-
-#endregion
 }
+#endregion
