@@ -197,12 +197,6 @@ namespace Softhorny.BitSet
 
         [MethodImpl(INLINE)] private static int HammingWeight(uint mask)
         {
-            if(mask == uint.MinValue)
-                return 0;
-
-            if(mask == uint.MaxValue)
-                return UINT32_SIZE;
-
             mask -= (mask >> 1) & 0x_55555555u;
             mask = (mask & 0x_33333333u) + ((mask >> 2) & 0x_33333333u);
             mask = (((mask + (mask >> 4)) & 0x_0F0F0F0Fu) * 0x_01010101u) >> 24;
@@ -212,14 +206,6 @@ namespace Softhorny.BitSet
 
         [MethodImpl(INLINE)] private static int HammingWeight(ulong mask)
         {
-            const int UINT64_SIZE = 64;
-
-            if(mask == ulong.MinValue)
-                return 0;
-
-            if(mask == ulong.MaxValue)
-                return UINT64_SIZE;
-
             mask -= (mask >> 1) & 0x_55555555_55555555ul;
             mask = (mask & 0x_33333333_33333333ul) + ((mask >> 2) & 0x_33333333_33333333ul);
             mask = (((mask + (mask >> 4)) & 0x_0F0F0F0F_0F0F0F0Ful) * 0x_01010101_01010101ul) >> 56;
