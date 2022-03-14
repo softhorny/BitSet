@@ -27,7 +27,7 @@ namespace Softhorny.BitSet
         /// <summary> Returns the number of bits actually used by this bitset. </summary>
         public int Length 
         { 
-            [MethodImpl(INLINE)] get => _bits.Length * UINT32_SIZE; 
+            [MethodImpl(INLINE)] get => _bits.Length << LOG2_UINT32_SIZE; 
         }
 
         [MethodImpl(INLINE)] private static void EnsureLength(ref int length)
