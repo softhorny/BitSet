@@ -75,7 +75,7 @@ namespace Softhorny.BitSet
 
             if(i == last)
             {
-                _bits[i] |= uint.MaxValue >> to & uint.MaxValue << from;
+                _bits[i] |= (uint.MaxValue >> to) & (uint.MaxValue << from);
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace Softhorny.BitSet
 
             if(i == last)
             {
-                _bits[i] &= ~(uint.MaxValue >> to & uint.MaxValue << from);
+                _bits[i] &= ~((uint.MaxValue >> to) & (uint.MaxValue << from));
                 return;
             }
 
@@ -174,9 +174,9 @@ namespace Softhorny.BitSet
             to = UINT32_SIZE - to;
 
             if(i == last)
-                return HammingWeight(_bits[i] & (uint.MaxValue << from & uint.MaxValue >> to));
+                return HammingWeight(_bits[i] & ((uint.MaxValue << from) & (uint.MaxValue >> to)));
 
-            int count = HammingWeight((_bits[i] & (uint.MaxValue << from)) | (ulong)(_bits[last] & (uint.MaxValue >> to)) << UINT32_SIZE);
+            int count = HammingWeight((_bits[i] & (uint.MaxValue << from)) | ((ulong)(_bits[last] & (uint.MaxValue >> to)) << UINT32_SIZE));
 
             for(i++; i < last; i++)
                 count += HammingWeight(_bits[i]);
