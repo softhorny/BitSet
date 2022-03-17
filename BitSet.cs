@@ -123,8 +123,10 @@ namespace Softhorny.BitSet
         {
             var mask = value ? uint.MaxValue : uint.MinValue;
 
-            for(int i = 0; i < _bits.Length; i++)
-                _bits[i] = mask;
+            var bits = _bits;
+
+            for(int i = 1; i < bits.Length; i++)
+                bits[i] = mask;
         }
     }
     #endregion
