@@ -151,7 +151,7 @@ namespace Softhorny.BitSet
             
             var newArray = new uint[length];
             
-            Array.Copy(_bits, 0, newArray, 0, _bits.Length > length ? length : _bits.Length);
+            Array.Copy(_bits, 0, newArray, 0, _bits.Length >= length ? length : _bits.Length);
             
             _bits = newArray;
         }
