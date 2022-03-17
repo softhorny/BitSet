@@ -69,8 +69,8 @@ namespace Softhorny.BitSet
             if(from >= to)
                 return;
 
-            int i = from >> LOG2_UINT32_SIZE,
-            last = to - 1 >> LOG2_UINT32_SIZE;
+            int i = from >> LOG2_UINT32_SIZE, last = to - 1 >> LOG2_UINT32_SIZE;
+            
             to = UINT32_SIZE - to;
 
             if(i == last)
@@ -92,8 +92,8 @@ namespace Softhorny.BitSet
             if(from >= to)
                 return;
 
-            int i = from >> LOG2_UINT32_SIZE,
-            last = to - 1 >> LOG2_UINT32_SIZE;
+            int i = from >> LOG2_UINT32_SIZE, last = to - 1 >> LOG2_UINT32_SIZE;
+            
             to = UINT32_SIZE - to;
 
             if(i == last)
@@ -169,8 +169,8 @@ namespace Softhorny.BitSet
             if(from >= to)
                 return 0;
 
-            int i = from >> LOG2_UINT32_SIZE,
-            last = to - 1 >> LOG2_UINT32_SIZE;
+            int i = from >> LOG2_UINT32_SIZE, last = to - 1 >> LOG2_UINT32_SIZE;
+            
             to = UINT32_SIZE - to;
 
             if(i == last)
