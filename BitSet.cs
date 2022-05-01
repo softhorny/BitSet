@@ -53,18 +53,18 @@ namespace softhorny.BitSet
         public bool Get(int key) => (_bits[key >> LOG2_UINT32_MASK_SIZE] & (1u << key)) != uint.MinValue;
 
         [MethodImpl(INLINE)] 
-        public void Set(int key) => _bits[key >> LOG2_UINT32_MASK_SIZE] |= 1u << key;
+        public void SetTrue(int key) => _bits[key >> LOG2_UINT32_MASK_SIZE] |= 1u << key;
 
         [MethodImpl(INLINE)] 
-        public void Clear(int key) => _bits[key >> LOG2_UINT32_MASK_SIZE] &= ~(1u << key);
+        public void SetFalse(int key) => _bits[key >> LOG2_UINT32_MASK_SIZE] &= ~(1u << key);
 
         [MethodImpl(INLINE)] 
         public void Set(int key, bool value)
         {
             if(value)
-                Set(key);
+                SetTrue(key);
             else
-                Clear(key);
+                SetFalse(key);
         }
 
         public bool this[int key] 
@@ -79,7 +79,7 @@ namespace softhorny.BitSet
         /// Sets the bits in the given range from (inclusive) and to (exclusive) to true. 
         /// </summary>
         [MethodImpl(INLINE)] 
-        public void Set(int from, int to)
+        public void SetTrue(int from, int to)
         {
             if(from >= to)
                 return;
@@ -105,7 +105,7 @@ namespace softhorny.BitSet
         /// Sets the bits in the given range from (inclusive) and to (exclusive) to false. 
         /// </summary>
         [MethodImpl(INLINE)] 
-        public void Clear(int from, int to)
+        public void SetFalse(int from, int to)
         {
             if(from >= to)
                 return;
@@ -134,9 +134,9 @@ namespace softhorny.BitSet
         public void Set(int from, int to, bool value)
         {
             if(value)
-                Set(from, to);
+                SetTrue(from, to);
             else
-                Clear(from, to);
+                SetFalse(from, to);
         }
 
         /// <summary> 
