@@ -1,10 +1,10 @@
 // https://github.com/softhorny/BitSet
 
-using System;
-using System.Runtime.CompilerServices;
-
 namespace softhorny.BitSet
 {
+    using System;
+    using System.Runtime.CompilerServices;
+    
     public partial class BitSet
     {
         private const MethodImplOptions INLINE = MethodImplOptions.AggressiveInlining;
