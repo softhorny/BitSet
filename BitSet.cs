@@ -16,12 +16,7 @@ namespace softh.BitSet
         /// Create a new bitset of the given length. All bits are initially false. 
         /// Length will be rounded up to a multiple of 32. 
         /// </summary>
-        public BitSet( int length )
-        {
-            length = ConvertNumberOfBitsToArrayLength( length );
-
-            _bits = length > 0 ? new uint[ length ] : Array.Empty<uint>();
-        }
+        public BitSet( int length ) => _bits = IsValidLength( ref length ) ? new uint[ length ] : Array.Empty<uint>();
 
         private uint[] _bits;
 
@@ -35,7 +30,7 @@ namespace softh.BitSet
         }
 
         [MethodImpl( INLINE )] 
-        private static float ConvertNumberOfBitsToArrayLength( int length ) => length > 0 ? ( ( length - 1 ) >> LOG2_UINT32_MASK_SIZE ) + 1 : 0;
+        private static bool IsValidLength( ref int length ) => ( length = ( ( length - 1 ) >> LOG2_UINT32_MASK_SIZE ) + 1 ) > 0;
     }
 
     #region Get/Set
@@ -158,16 +153,14 @@ namespace softh.BitSet
         [MethodImpl( INLINE )] 
         public void Resize( int length )
         {
-            length = ConvertNumberOfBitsToArrayLength( length );
-
-            if( length == _bits.Length )
-                return;
-
-            if( length == 0 )
+            if ( !IsValidLength( ref length ) )
             {
                 _bits = Array.Empty<uint>();
                 return;
             }
+
+            if( length == _bits.Length )
+                return;
             
             var newArray = new uint[ length ];
             
