@@ -18,7 +18,7 @@ namespace softh.BitSet
         /// </summary>
         public BitSet( int length )
         {
-            EnsureLength( ref length );
+            length = ConvertNumberOfBitsToArrayLength( length );
 
             _bits = length > 0 ? new uint[ length ] : Array.Empty<uint>();
         }
@@ -35,13 +35,7 @@ namespace softh.BitSet
         }
 
         [MethodImpl( INLINE )] 
-        private static void EnsureLength( ref int length )
-        {
-            if( length < 0 )
-                throw new ArgumentOutOfRangeException();
-
-            length = ( ( length - 1 ) >> LOG2_UINT32_MASK_SIZE ) + 1;
-        }
+        private static float ConvertNumberOfBitsToArrayLength( int length ) => length > 0 ? ( ( length - 1 ) >> LOG2_UINT32_MASK_SIZE ) + 1 : 0;
     }
 
     #region Get/Set
@@ -164,7 +158,7 @@ namespace softh.BitSet
         [MethodImpl( INLINE )] 
         public void Resize( int length )
         {
-            EnsureLength( ref length );
+            length = ConvertNumberOfBitsToArrayLength( length );
 
             if( length == _bits.Length )
                 return;
