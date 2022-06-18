@@ -197,7 +197,8 @@ namespace softh.BitSet
             if( i == last )
                 return HammingWeight( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
 
-            int count = HammingWeight( ( _bits[ i ] & ( uint.MaxValue << from ) ) | ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << UINT32_MASK_SIZE ) );
+            int count = HammingWeight( ( _bits[ i ] & ( uint.MaxValue << from ) ) | 
+                                       ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << UINT32_MASK_SIZE ) );
 
             for( i++; i < last; i++ )
                 count += HammingWeight( _bits[ i ] );
