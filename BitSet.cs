@@ -39,6 +39,9 @@ namespace softh.BitSet
     {
         [MethodImpl( INLINE )] 
         public bool Get( int key ) => ( _bits[ key >> LOG2_UINT32_MASK_SIZE ] & ( 1u << key ) ) != uint.MinValue;
+        
+        [MethodImpl( INLINE )] 
+        public int GetInt( int key ) => (int)( _bits[ key >> LOG2_UINT32_MASK_SIZE ] >> key & 1u );
 
         [MethodImpl( INLINE )] 
         public void SetTrue( int key ) => _bits[ key >> LOG2_UINT32_MASK_SIZE ] |= 1u << key;
@@ -175,12 +178,6 @@ namespace softh.BitSet
 
     public partial class BitSet
     {
-        /// <summary> 
-        /// Returns the population count (number of bits set) of a particular bit (0 or 1). 
-        /// </summary>
-        [MethodImpl( INLINE )] 
-        public int PopCount( int key ) => (int)( _bits[ key >> LOG2_UINT32_MASK_SIZE ] >> key & 1u );
-
         /// <summary> 
         /// Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). 
         /// </summary>
