@@ -8,9 +8,9 @@ namespace softh.BitSet
     {
         private const MethodImplOptions INLINE = MethodImplOptions.AggressiveInlining;
 
-        private const int UINT32_MASK_SIZE = 32;
+        private const int MASK_SIZE = 32;
 
-        private const int LOG2_UINT32_MASK_SIZE = 5;
+        private const int LOG2_MASK_SIZE = 5;
 
         /// <summary> 
         /// Create a new bitset of the given length. All bits are initially false. 
@@ -26,28 +26,25 @@ namespace softh.BitSet
         public int Length 
         { 
             [MethodImpl( INLINE )] 
-            get => _bits.Length << LOG2_UINT32_MASK_SIZE; 
+            get => _bits.Length << LOG2_MASK_SIZE; 
         }
 
         [MethodImpl( INLINE )] 
-        private static bool IsValidLength( ref int length ) => ( length = ( ( length - 1 ) >> LOG2_UINT32_MASK_SIZE ) + 1 ) > 0;
-    }
+        private static bool IsValidLength( ref int length ) => ( length = ( ( length - 1 ) >> LOG2_MASK_SIZE ) + 1 ) > 0;
 
     #region Get/Set
 
-    public partial class BitSet
-    {
         [MethodImpl( INLINE )] 
-        public bool Get( int key ) => ( _bits[ key >> LOG2_UINT32_MASK_SIZE ] & ( 1u << key ) ) != uint.MinValue;
+        public bool Get( int key ) => ( _bits[ key >> LOG2_MASK_SIZE ] & ( 1u << key ) ) != uint.MinValue;
         
         [MethodImpl( INLINE )] 
-        public int GetInt( int key ) => (int)( _bits[ key >> LOG2_UINT32_MASK_SIZE ] >> key & 1u );
+        public int GetInt( int key ) => (int)( _bits[ key >> LOG2_MASK_SIZE ] >> key & 1u );
 
         [MethodImpl( INLINE )] 
-        public void SetTrue( int key ) => _bits[ key >> LOG2_UINT32_MASK_SIZE ] |= 1u << key;
+        public void SetTrue( int key ) => _bits[ key >> LOG2_MASK_SIZE ] |= 1u << key;
 
         [MethodImpl( INLINE )] 
-        public void SetFalse( int key ) => _bits[ key >> LOG2_UINT32_MASK_SIZE ] &= ~( 1u << key );
+        public void SetFalse( int key ) => _bits[ key >> LOG2_MASK_SIZE ] &= ~( 1u << key );
 
         [MethodImpl( INLINE )] 
         public void Set( int key, bool value )
@@ -75,9 +72,9 @@ namespace softh.BitSet
             if( from >= to )
                 return;
 
-            int i = from >> LOG2_UINT32_MASK_SIZE, last = to - 1 >> LOG2_UINT32_MASK_SIZE;
+            int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
             
-            to = UINT32_MASK_SIZE - to;
+            to = MASK_SIZE - to;
 
             if( i == last )
             {
@@ -101,9 +98,9 @@ namespace softh.BitSet
             if( from >= to )
                 return;
 
-            int i = from >> LOG2_UINT32_MASK_SIZE, last = to - 1 >> LOG2_UINT32_MASK_SIZE;
+            int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
             
-            to = UINT32_MASK_SIZE - to;
+            to = MASK_SIZE - to;
 
             if( i == last )
             {
@@ -143,13 +140,11 @@ namespace softh.BitSet
             for( int i = 0; i < bits.Length; i++ )
                 bits[ i ] = mask;
         }
-    }
+
     #endregion
 
     #region Resize
 
-    public partial class BitSet
-    {
         /// <summary> 
         /// Changes the number of bits of this bitset to the specified new length. 
         /// </summary>
@@ -171,13 +166,11 @@ namespace softh.BitSet
 
             _bits = newArray;
         }
-    }
+
     #endregion
 
     #region PopCount
 
-    public partial class BitSet
-    {
         /// <summary> 
         /// Returns the population count (number of bits set) in the given range from (inclusive) and to (exclusive). 
         /// </summary>
@@ -187,15 +180,15 @@ namespace softh.BitSet
             if( from >= to )
                 return 0;
 
-            int i = from >> LOG2_UINT32_MASK_SIZE, last = to - 1 >> LOG2_UINT32_MASK_SIZE;
+            int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
             
-            to = UINT32_MASK_SIZE - to;
+            to = MASK_SIZE - to;
 
             if( i == last )
                 return HammingWeight( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
 
             int count = HammingWeight( ( _bits[ i ] & ( uint.MaxValue << from ) ) | 
-                                       ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << UINT32_MASK_SIZE ) );
+                                       ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
 
             for( i++; i < last; i++ )
                 count += HammingWeight( _bits[ i ] );
@@ -236,6 +229,7 @@ namespace softh.BitSet
 
             return (int)mask;
         }
-    }
+
     #endregion
+    }
 }
