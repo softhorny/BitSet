@@ -3,7 +3,6 @@ namespace softh.BitSet
     using System;
     using System.Runtime.CompilerServices;
     
-    // https://github.com/softhorny/BitSet
     public partial class BitSet
     {
         private const MethodImplOptions INLINE = MethodImplOptions.AggressiveInlining;
@@ -16,9 +15,9 @@ namespace softh.BitSet
         /// Create a new bitset of the given length. All bits are initially false. 
         /// Length will be rounded up to a multiple of 32. 
         /// </summary>
-        public BitSet( int length ) => _bits = IsValidLength( ref length ) ? new uint[ length ] : Array.Empty<uint>();
+        public BitSet( int length ) => _bitArray = IsValidLength( ref length ) ? new uint[ length ] : Array.Empty<uint>();
 
-        private uint[] _bits;
+        private uint[] _bitArray;
 
         /// <summary> 
         /// Returns the number of bits actually used by this bitset. 
@@ -26,7 +25,7 @@ namespace softh.BitSet
         public int Length 
         { 
             [MethodImpl( INLINE )] 
-            get => _bits.Length << LOG2_MASK_SIZE; 
+            get => _bitArray.Length << LOG2_MASK_SIZE; 
         }
 
         [MethodImpl( INLINE )] 
@@ -35,16 +34,16 @@ namespace softh.BitSet
     #region Get/Set
 
         [MethodImpl( INLINE )] 
-        public bool Get( int key ) => ( _bits[ key >> LOG2_MASK_SIZE ] & ( 1u << key ) ) != uint.MinValue;
+        public bool Get( int key ) => ( _bitArray[ key >> LOG2_MASK_SIZE ] & ( 1u << key ) ) != uint.MinValue;
         
         [MethodImpl( INLINE )] 
-        public int GetInt( int key ) => (int)( _bits[ key >> LOG2_MASK_SIZE ] >> key & 1u );
+        public int GetInt( int key ) => (int)( _bitArray[ key >> LOG2_MASK_SIZE ] >> key & 1u );
 
         [MethodImpl( INLINE )] 
-        public void SetTrue( int key ) => _bits[ key >> LOG2_MASK_SIZE ] |= 1u << key;
+        public void SetTrue( int key ) => _bitArray[ key >> LOG2_MASK_SIZE ] |= 1u << key;
 
         [MethodImpl( INLINE )] 
-        public void SetFalse( int key ) => _bits[ key >> LOG2_MASK_SIZE ] &= ~( 1u << key );
+        public void SetFalse( int key ) => _bitArray[ key >> LOG2_MASK_SIZE ] &= ~( 1u << key );
 
         [MethodImpl( INLINE )] 
         public void Set( int key, bool value )
@@ -78,15 +77,15 @@ namespace softh.BitSet
 
             if( i == last )
             {
-                _bits[i] |= ( uint.MaxValue >> to ) & ( uint.MaxValue << from );
+                _bitArray[i] |= ( uint.MaxValue >> to ) & ( uint.MaxValue << from );
                 return;
             }
 
-            _bits[ i ] |= uint.MaxValue << from;
-            _bits[ last ] |= uint.MaxValue >> to;
+            _bitArray[ i ] |= uint.MaxValue << from;
+            _bitArray[ last ] |= uint.MaxValue >> to;
 
             for( i++; i < last; i++ )
-                _bits[ i ] = uint.MaxValue;
+                _bitArray[ i ] = uint.MaxValue;
         }
 
         /// <summary> 
@@ -104,15 +103,15 @@ namespace softh.BitSet
 
             if( i == last )
             {
-                _bits[ i ] &= ~( ( uint.MaxValue >> to ) & ( uint.MaxValue << from ) );
+                _bitArray[ i ] &= ~( ( uint.MaxValue >> to ) & ( uint.MaxValue << from ) );
                 return;
             }
 
-            _bits[ i ] &= ~( uint.MaxValue << from );
-            _bits[ last ] &= ~( uint.MaxValue >> to );
+            _bitArray[ i ] &= ~( uint.MaxValue << from );
+            _bitArray[ last ] &= ~( uint.MaxValue >> to );
 
             for( i++; i < last; i++ )
-                _bits[ i ] = uint.MinValue;
+                _bitArray[ i ] = uint.MinValue;
         }
 
         /// <summary> 
@@ -135,7 +134,7 @@ namespace softh.BitSet
         {
             uint mask = value ? uint.MaxValue : uint.MinValue;
 
-            uint[] bits = _bits;
+            uint[] bits = _bitArray;
 
             for( int i = 0; i < bits.Length; i++ )
                 bits[ i ] = mask;
@@ -153,18 +152,18 @@ namespace softh.BitSet
         {
             if ( !IsValidLength( ref length ) )
             {
-                _bits = Array.Empty<uint>();
+                _bitArray = Array.Empty<uint>();
                 return;
             }
 
-            if( length == _bits.Length )
+            if( length == _bitArray.Length )
                 return;
             
             var newArray = new uint[ length ];
             
-            Array.Copy( _bits, 0, newArray, 0, _bits.Length >= length ? length : _bits.Length );
+            Array.Copy( _bitArray, 0, newArray, 0, _bitArray.Length >= length ? length : _bitArray.Length );
 
-            _bits = newArray;
+            _bitArray = newArray;
         }
 
     #endregion
@@ -185,13 +184,13 @@ namespace softh.BitSet
             to = MASK_SIZE - to;
 
             if( i == last )
-                return HammingWeight( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
+                return HammingWeight( _bitArray[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
 
-            int count = HammingWeight( ( _bits[ i ] & ( uint.MaxValue << from ) ) | 
-                                       ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
+            int count = HammingWeight( ( _bitArray[ i ] & ( uint.MaxValue << from ) ) | 
+                                       ( (ulong)( _bitArray[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
 
             for( i++; i < last; i++ )
-                count += HammingWeight( _bits[ i ] );
+                count += HammingWeight( _bitArray[ i ] );
 
             return count;
         }
@@ -204,7 +203,7 @@ namespace softh.BitSet
         { 
             int count = 0;
 
-            foreach( var mask in _bits )
+            foreach( var mask in _bitArray )
                 count += HammingWeight( mask );
 
             return count;
