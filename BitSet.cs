@@ -1,8 +1,8 @@
+using System;
+using System.Runtime.CompilerServices;
+
 namespace softh.Collections
 {
-    using System;
-    using System.Runtime.CompilerServices;
-
     public readonly struct Bit
     {   
         private readonly byte _value;
