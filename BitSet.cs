@@ -179,21 +179,21 @@ namespace softh.Collections
                 return 0;
             }
 
-            int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
+            ( int start, int end ) = ( from >> LOG2_MASK_SIZE, end = to - 1 >> LOG2_MASK_SIZE );
             
             to = MASK_SIZE - to;
 
-            if( i == last )
+            if( start == end )
             {
-                return Bit.PopCount( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
+                return Bit.PopCount( _bits[ start ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
             }
 
-            int count = Bit.PopCount( ( _bits[ i ] & ( uint.MaxValue << from ) ) 
-                      | ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
+            int count = Bit.PopCount( ( _bits[ start ] & ( uint.MaxValue << from ) ) 
+                      | ( (ulong)( _bits[ end ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
 
-            for( i++; i < last; i++ )
+            for( start++; start < end; start++ )
             {
-                count += Bit.PopCount( _bits[ i ] );
+                count += Bit.PopCount( _bits[ start ] );
             }
 
             return count;
