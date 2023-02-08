@@ -52,23 +52,28 @@ namespace softh.Collections
         public void SetTrue( int from, int to )
         {
             if( from >= to )
-                return;
-
-            int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
-            
-            to = MASK_SIZE - to;
-
-            if( i == last )
             {
-                _bits[i] |= ( uint.MaxValue >> to ) & ( uint.MaxValue << from );
                 return;
             }
 
-            _bits[ i ] |= uint.MaxValue << from;
-            _bits[ last ] |= uint.MaxValue >> to;
+            ( int start, int end ) = ( from >> LOG2_MASK_SIZE, end = to - 1 >> LOG2_MASK_SIZE );
+            
+            to = MASK_SIZE - to;
 
-            for( i++; i < last; i++ )
-                _bits[ i ] = uint.MaxValue;
+            if( start == end )
+            {
+                _bits[ start ] |= ( uint.MaxValue >> to ) & ( uint.MaxValue << from );
+
+                return;
+            }
+
+            _bits[ start ] |= uint.MaxValue << from;
+            _bits[ end ] |= uint.MaxValue >> to;
+
+            for( start++; start < end; start++ )
+            {
+                _bits[ start ] = uint.MaxValue;
+            }
         }
 
         /// <summary> 
@@ -78,43 +83,27 @@ namespace softh.Collections
         public void SetFalse( int from, int to )
         {
             if( from >= to )
-                return;
-
-            int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
-            
-            to = MASK_SIZE - to;
-
-            if( i == last )
             {
-                _bits[ i ] &= ~( ( uint.MaxValue >> to ) & ( uint.MaxValue << from ) );
                 return;
             }
 
-            _bits[ i ] &= ~( uint.MaxValue << from );
-            _bits[ last ] &= ~( uint.MaxValue >> to );
+            ( int start, int end ) = ( from >> LOG2_MASK_SIZE, end = to - 1 >> LOG2_MASK_SIZE );
+            
+            to = MASK_SIZE - to;
 
-            for( i++; i < last; i++ )
-                _bits[ i ] = uint.MinValue;
-        }
-
-        /// <summary> 
-        /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. 
-        /// </summary>
-        public bool this[ Range range ] 
-        { 
-            [MethodImpl( INLINE )] 
-            set 
+            if( start == end )
             {
-                ( int offset, int length ) = range.GetOffsetAndLength( Length );
+                _bits[ start ] &= ~( ( uint.MaxValue >> to ) & ( uint.MaxValue << from ) );
 
-                if ( value )
-                {
-                    SetTrue( offset, offset + length );
+                return;
+            }
 
-                    return;
-                }
-                
-                SetFalse( offset, offset + length );
+            _bits[ start ] &= ~( uint.MaxValue << from );
+            _bits[ end ] &= ~( uint.MaxValue >> to );
+
+            for( start++; start < end; start++ )
+            { 
+                _bits[ start ] = uint.MinValue;
             }
         }
 
@@ -124,10 +113,12 @@ namespace softh.Collections
         [MethodImpl( INLINE )] 
         public void SetTrue()
         {
-            uint[] bits = _bits;
+            var bits = _bits;
 
             for( int i = 0; i < bits.Length; i++ )
+            {
                 bits[ i ] = uint.MaxValue;
+            }
         }
 
         /// <summary> 
@@ -136,10 +127,12 @@ namespace softh.Collections
         [MethodImpl( INLINE )] 
         public void SetFalse()
         {
-            uint[] bits = _bits;
+            var bits = _bits;
 
             for( int i = 0; i < bits.Length; i++ )
+            {
                 bits[ i ] = uint.MinValue;
+            }
         }
 
     #endregion
@@ -155,11 +148,14 @@ namespace softh.Collections
             if ( !IsValidLength( ref newSize ) )
             {
                 _bits = Array.Empty<uint>();
+
                 return;
             }
 
             if( newSize == _bits.Length )
+            {
                 return;
+            }
             
             var newArray = new uint[ newSize ];
             
@@ -179,20 +175,26 @@ namespace softh.Collections
         public int PopCount( int from, int to )
         {
             if( from >= to )
+            {
                 return 0;
+            }
 
             int i = from >> LOG2_MASK_SIZE, last = to - 1 >> LOG2_MASK_SIZE;
             
             to = MASK_SIZE - to;
 
             if( i == last )
+            {
                 return Bit.PopCount( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
+            }
 
-            int count = Bit.PopCount( ( _bits[ i ] & ( uint.MaxValue << from ) ) | 
-                                       ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
+            int count = Bit.PopCount( ( _bits[ i ] & ( uint.MaxValue << from ) ) 
+                      | ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
 
             for( i++; i < last; i++ )
+            {
                 count += Bit.PopCount( _bits[ i ] );
+            }
 
             return count;
         }
@@ -206,7 +208,9 @@ namespace softh.Collections
             int count = 0;
 
             for ( int i = 0; i < Length; i++ )
+            {
                 count += Bit.PopCount( _bits[ i ] ); 
+            }
 
             return count;
         }
