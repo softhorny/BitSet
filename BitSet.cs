@@ -1,8 +1,21 @@
-namespace softh.BitSet
+namespace softh.Collections
 {
     using System;
     using System.Runtime.CompilerServices;
-    
+
+    public readonly struct Bit
+    {   
+        private readonly byte _value;
+        
+        private Bit( byte value ) => _value = value;
+
+        [MethodImpl( MethodImplOptions.AggressiveInlining )] 
+        public static Bit GetFromInt( int value, int offset ) => new Bit( (byte)( value >> offset & 1 ) );
+        
+        public static implicit operator bool( Bit bit ) => bit._value != 0;
+        public static implicit operator int( Bit bit ) => bit._value;
+    }
+
     public sealed class BitSet
     {
         private const MethodImplOptions INLINE = MethodImplOptions.AggressiveInlining;
@@ -13,7 +26,7 @@ namespace softh.BitSet
 
         /// <summary> 
         /// Create a new bitset of the given length. All bits are initially false. 
-        /// Length will be rounded up to a multiple of 32. 
+        /// Length will be rounded up to a multiple of mask size (32). 
         /// </summary>
         public BitSet( int length ) => _bits = IsValidLength( ref length ) ? new uint[ length ] : Array.Empty<uint>();
 
@@ -34,35 +47,31 @@ namespace softh.BitSet
     #region Get/Set
 
         [MethodImpl( INLINE )] 
-        public bool Get( int key ) => ( _bits[ key >> LOG2_MASK_SIZE ] & ( 1u << key ) ) != uint.MinValue;
+        public Bit Get( int offset ) => Bit.GetFromInt( (int)_bits[ offset >> LOG2_MASK_SIZE ], offset );
 
         [MethodImpl( INLINE )] 
-        public Bit GetBit( int key ) => new Bit( _bits[ key >> LOG2_MASK_SIZE ], key );
-        
-        [MethodImpl( INLINE )] 
-        public int GetInt( int key ) => (int)( _bits[ key >> LOG2_MASK_SIZE ] >> key & 1u );
+        public void SetTrue( int offset ) => _bits[ offset >> LOG2_MASK_SIZE ] |= 1u << offset;
 
         [MethodImpl( INLINE )] 
-        public void SetTrue( int key ) => _bits[ key >> LOG2_MASK_SIZE ] |= 1u << key;
+        public void SetFalse( int offset ) => _bits[ offset >> LOG2_MASK_SIZE ] &= ~( 1u << offset );
 
-        [MethodImpl( INLINE )] 
-        public void SetFalse( int key ) => _bits[ key >> LOG2_MASK_SIZE ] &= ~( 1u << key );
-
-        [MethodImpl( INLINE )] 
-        public void Set( int key, bool value )
-        {
-            if( value )
-                SetTrue( key );
-            else
-                SetFalse( key );
-        }
-
-        public bool this[ int key ] 
+        public bool this[ int offset ] 
         { 
             [MethodImpl( INLINE )] 
-            get => Get( key );
+            get => ( _bits[ offset >> LOG2_MASK_SIZE ] & ( 1u << offset ) ) != 0;
+
             [MethodImpl( INLINE )] 
-            set => Set( key, value ); 
+            set 
+            {
+                if ( value )
+                {
+                    SetTrue( offset );
+
+                    return;
+                }
+               
+                SetFalse( offset );
+            }
         }
 
         /// <summary> 
@@ -88,7 +97,9 @@ namespace softh.BitSet
             _bits[ last ] |= uint.MaxValue >> to;
 
             for( i++; i < last; i++ )
+            {
                 _bits[ i ] = uint.MaxValue;
+            }
         }
 
         /// <summary> 
@@ -120,13 +131,22 @@ namespace softh.BitSet
         /// <summary> 
         /// Sets the bits in the given range from (inclusive) and to (exclusive) to the specified value. 
         /// </summary>
-        [MethodImpl( INLINE )] 
-        public void Set( int from, int to, bool value )
-        {
-            if( value )
-                SetTrue( from, to );
-            else
-                SetFalse( from, to );
+        public bool this[ Range range ] 
+        { 
+            [MethodImpl( INLINE )] 
+            set 
+            {
+                ( int offset, int length ) = range.GetOffsetAndLength( Length );
+
+                if ( value )
+                {
+                    SetTrue( offset, offset + length );
+
+                    return;
+                }
+                
+                SetFalse( offset, offset + length );
+            }
         }
 
         /// <summary> 
@@ -206,8 +226,8 @@ namespace softh.BitSet
         { 
             int count = 0;
 
-            foreach( var mask in _bits )
-                count += HammingWeight( mask );
+            for ( int i = 0; i < Length; i++ )
+                count += HammingWeight( _bits[ i ] ); 
 
             return count;
         }
@@ -233,20 +253,5 @@ namespace softh.BitSet
         }
 
     #endregion
-    }
-
-    public readonly struct Bit
-    {   
-        private readonly uint _value;
-        
-        public Bit( bool value ) => _value = value ? 1u : 0;
-        public Bit( uint value, int offset ) => _value = value >> offset & 1;
-        private Bit( uint value ) => _value = value;
-        
-        public static implicit operator bool( Bit bit ) => bit._value == 1;
-        public static implicit operator Bit( bool value ) => new Bit( value );
-        public static implicit operator int( Bit bit ) => (int)bit._value;
-        
-        public static Bit operator !( Bit bit ) => new Bit( bit._value ^ 1 );
     }
 }
