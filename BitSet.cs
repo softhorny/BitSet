@@ -62,17 +62,17 @@ namespace softh.Collections
 
             if( start == end )
             {
-                _bits[ start ] |= ( uint.MaxValue >> to ) & ( uint.MaxValue << from );
+                _bits[ start ] |= ( ~0u >> to ) & ( ~0u << from );
 
                 return;
             }
 
-            _bits[ start ] |= uint.MaxValue << from;
-            _bits[ end ] |= uint.MaxValue >> to;
+            _bits[ start ] |= ~0u << from;
+            _bits[ end ] |= ~0u >> to;
 
             for( start++; start < end; start++ )
             {
-                _bits[ start ] = uint.MaxValue;
+                _bits[ start ] = ~0u;
             }
         }
 
@@ -93,17 +93,17 @@ namespace softh.Collections
 
             if( start == end )
             {
-                _bits[ start ] &= ~( ( uint.MaxValue >> to ) & ( uint.MaxValue << from ) );
+                _bits[ start ] &= ~( ( ~0u >> to ) & ( ~0u << from ) );
 
                 return;
             }
 
-            _bits[ start ] &= ~( uint.MaxValue << from );
-            _bits[ end ] &= ~( uint.MaxValue >> to );
+            _bits[ start ] &= ~( ~0u << from );
+            _bits[ end ] &= ~( ~0u >> to );
 
             for( start++; start < end; start++ )
             { 
-                _bits[ start ] = uint.MinValue;
+                _bits[ start ] = 0u;
             }
         }
 
@@ -117,7 +117,7 @@ namespace softh.Collections
 
             for( int i = 0; i < bits.Length; i++ )
             {
-                bits[ i ] = uint.MaxValue;
+                bits[ i ] = ~0u;
             }
         }
 
@@ -131,7 +131,7 @@ namespace softh.Collections
 
             for( int i = 0; i < bits.Length; i++ )
             {
-                bits[ i ] = uint.MinValue;
+                bits[ i ] = 0u;
             }
         }
 
@@ -185,11 +185,11 @@ namespace softh.Collections
 
             if( start == end )
             {
-                return Bit.PopCount( _bits[ start ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
+                return Bit.PopCount( _bits[ start ] & ( ( ~0u << from ) & ( ~0u >> to ) ) );
             }
 
-            int count = Bit.PopCount( ( _bits[ start ] & ( uint.MaxValue << from ) ) 
-                      | ( (ulong)( _bits[ end ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
+            int count = Bit.PopCount( ( _bits[ start ] & ( ~0u << from ) ) 
+                      | ( (ulong)( _bits[ end ] & ( ~0u >> to ) ) << MASK_SIZE ) );
 
             for( start++; start < end; start++ )
             {
