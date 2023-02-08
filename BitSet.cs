@@ -33,33 +33,17 @@ namespace softh.Collections
 
     #region Get/Set
 
-        [MethodImpl( INLINE )] 
-        public Bit Get( int offset ) => Bit.GetFromInt( (int)_bits[ offset >> LOG2_MASK_SIZE ], offset );
+        public Bit this[ int offset ] 
+        { 
+            [MethodImpl( INLINE )] 
+            get => Bit.GetFrom( _bits[ offset >> LOG2_MASK_SIZE ], offset );
+        }
 
         [MethodImpl( INLINE )] 
         public void SetTrue( int offset ) => _bits[ offset >> LOG2_MASK_SIZE ] |= 1u << offset;
 
         [MethodImpl( INLINE )] 
         public void SetFalse( int offset ) => _bits[ offset >> LOG2_MASK_SIZE ] &= ~( 1u << offset );
-
-        public bool this[ int offset ] 
-        { 
-            [MethodImpl( INLINE )] 
-            get => ( _bits[ offset >> LOG2_MASK_SIZE ] & ( 1u << offset ) ) != 0;
-
-            [MethodImpl( INLINE )] 
-            set 
-            {
-                if ( value )
-                {
-                    SetTrue( offset );
-
-                    return;
-                }
-               
-                SetFalse( offset );
-            }
-        }
 
         /// <summary> 
         /// Sets the bits in the given range from (inclusive) and to (exclusive) to true. 
@@ -84,9 +68,7 @@ namespace softh.Collections
             _bits[ last ] |= uint.MaxValue >> to;
 
             for( i++; i < last; i++ )
-            {
                 _bits[ i ] = uint.MaxValue;
-            }
         }
 
         /// <summary> 
@@ -137,17 +119,27 @@ namespace softh.Collections
         }
 
         /// <summary> 
-        /// Sets all bits in the bitset to the specified value. 
+        /// Sets all bits in the bitset to true.
         /// </summary>
         [MethodImpl( INLINE )] 
-        public void SetAll( bool value )
+        public void SetTrue()
         {
-            uint mask = value ? uint.MaxValue : uint.MinValue;
-
             uint[] bits = _bits;
 
             for( int i = 0; i < bits.Length; i++ )
-                bits[ i ] = mask;
+                bits[ i ] = uint.MaxValue;
+        }
+
+        /// <summary> 
+        /// Sets all bits in the bitset to false. 
+        /// </summary>
+        [MethodImpl( INLINE )] 
+        public void SetFalse()
+        {
+            uint[] bits = _bits;
+
+            for( int i = 0; i < bits.Length; i++ )
+                bits[ i ] = uint.MinValue;
         }
 
     #endregion
@@ -155,23 +147,23 @@ namespace softh.Collections
     #region Resize
 
         /// <summary> 
-        /// Changes the number of bits of this bitset to the specified new length. 
+        /// Changes the number of bits of this bitset to the specified new size. 
         /// </summary>
         [MethodImpl( INLINE )] 
-        public void Resize( int length )
+        public void Resize( int newSize )
         {
-            if ( !IsValidLength( ref length ) )
+            if ( !IsValidLength( ref newSize ) )
             {
                 _bits = Array.Empty<uint>();
                 return;
             }
 
-            if( length == _bits.Length )
+            if( newSize == _bits.Length )
                 return;
             
-            var newArray = new uint[ length ];
+            var newArray = new uint[ newSize ];
             
-            Array.Copy( _bits, 0, newArray, 0, _bits.Length >= length ? length : _bits.Length );
+            Array.Copy( _bits, 0, newArray, 0, _bits.Length >= newSize ? newSize : _bits.Length );
 
             _bits = newArray;
         }
@@ -194,13 +186,13 @@ namespace softh.Collections
             to = MASK_SIZE - to;
 
             if( i == last )
-                return HammingWeight( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
+                return Bit.PopCount( _bits[ i ] & ( ( uint.MaxValue << from ) & ( uint.MaxValue >> to ) ) );
 
-            int count = HammingWeight( ( _bits[ i ] & ( uint.MaxValue << from ) ) | 
+            int count = Bit.PopCount( ( _bits[ i ] & ( uint.MaxValue << from ) ) | 
                                        ( (ulong)( _bits[ last ] & ( uint.MaxValue >> to ) ) << MASK_SIZE ) );
 
             for( i++; i < last; i++ )
-                count += HammingWeight( _bits[ i ] );
+                count += Bit.PopCount( _bits[ i ] );
 
             return count;
         }
@@ -214,29 +206,9 @@ namespace softh.Collections
             int count = 0;
 
             for ( int i = 0; i < Length; i++ )
-                count += HammingWeight( _bits[ i ] ); 
+                count += Bit.PopCount( _bits[ i ] ); 
 
             return count;
-        }
-
-        [MethodImpl( INLINE )] 
-        private static int HammingWeight( uint mask )
-        {
-            mask -= ( mask >> 1 ) & 0x_55555555u;
-            mask = ( mask & 0x_33333333u ) + ( ( mask >> 2 ) & 0x_33333333u );
-            mask = ( ( ( mask + ( mask >> 4 ) ) & 0x_0F0F0F0Fu ) * 0x_01010101u ) >> 24;
-
-            return (int)mask;
-        }
-
-        [MethodImpl( INLINE )] 
-        private static int HammingWeight( ulong mask )
-        {
-            mask -= ( mask >> 1 ) & 0x_55555555_55555555ul;
-            mask = ( mask & 0x_33333333_33333333ul ) + ( ( mask >> 2 ) & 0x_33333333_33333333ul );
-            mask = ( ( ( mask + ( mask >> 4 ) ) & 0x_0F0F0F0F_0F0F0F0Ful ) * 0x_01010101_01010101ul ) >> 56;
-
-            return (int)mask;
         }
 
     #endregion
